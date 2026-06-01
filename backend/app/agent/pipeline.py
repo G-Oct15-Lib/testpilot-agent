@@ -6,6 +6,7 @@ from uuid import uuid4
 from app.agent.change_analyzer import analyze_change
 from app.agent.human_review import plan_human_review
 from app.agent.impact_mapper import map_impact
+from app.agent.llm_client import try_generate_llm_plan
 from app.agent.localizer import localize_plan
 from app.agent.regression_recommender import recommend_regression
 from app.agent.risk_scorer import score_risk
@@ -15,6 +16,10 @@ from app.models import AnalyzeRequest, ExportLinks, TestPlanResponse
 
 
 def generate_test_plan(request: AnalyzeRequest) -> TestPlanResponse:
+    llm_plan = try_generate_llm_plan(request)
+    if llm_plan:
+        return llm_plan
+
     change_summary = analyze_change(request)
     impact = map_impact(request)
     risk = score_risk(request.title, request.content, request.businessContext, impact)
@@ -26,6 +31,7 @@ def generate_test_plan(request: AnalyzeRequest) -> TestPlanResponse:
     plan_id = f"tp-{uuid4().hex[:8]}"
     plan = TestPlanResponse(
         language=request.language,
+        agentMode="mock",
         planId=plan_id,
         createdAt=datetime.now(timezone.utc).isoformat(),
         changeSummary=change_summary,

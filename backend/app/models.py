@@ -7,6 +7,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 InputType = Literal["pr_summary", "requirement", "release_note", "bugfix"]
 Language = Literal["en", "zh"]
+AgentMode = Literal["mock", "llm"]
 ImpactLevel = Literal["low", "medium", "high", "critical"]
 TestType = Literal[
     "functional",
@@ -126,6 +127,7 @@ class ExportLinks(BaseModel):
 
 class TestPlanResponse(BaseModel):
     language: Language = "en"
+    agentMode: AgentMode = "mock"
     planId: str
     createdAt: str
     changeSummary: ChangeSummary

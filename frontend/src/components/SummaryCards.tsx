@@ -37,7 +37,8 @@ export function SummaryCards({ plan, language }: SummaryCardsProps) {
         <p>{t.generatedTests}</p>
         <h3>{plan.testCases.length}</h3>
         <span>
-          {plan.testCases.filter((test) => test.automationCandidate).length} {t.automationCandidates}
+          {plan.testCases.filter((test) => test.automationCandidate).length} {t.automationCandidates} ·{" "}
+          {plan.agentMode === "llm" ? t.llmMode : t.mockMode}
         </span>
       </article>
     </div>

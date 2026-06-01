@@ -1,5 +1,6 @@
 export type InputType = "pr_summary" | "requirement" | "release_note" | "bugfix";
 export type Language = "en" | "zh";
+export type AgentMode = "mock" | "llm";
 export type ImpactLevel = "low" | "medium" | "high" | "critical";
 export type TestType =
   | "functional"
@@ -113,6 +114,7 @@ export interface UiPathOrchestrationPlan {
 
 export interface TestPlanResponse {
   language: Language;
+  agentMode: AgentMode;
   planId: string;
   createdAt: string;
   changeSummary: ChangeSummary;

@@ -35,14 +35,17 @@ The MVP demonstrates the end-to-end workflow without depending on live UiPath AP
 
 ### Current MVP Transparency
 
-This submission runs as a local deterministic/mock agent pipeline. It does not call a hosted LLM provider, does not authenticate to a UiPath tenant, and does not create real UiPath Test Cloud, Orchestrator, or Action Center objects during the demo.
+By default, this submission runs as a local deterministic/mock agent pipeline. In default mode it does not call a hosted LLM provider, does not authenticate to a UiPath tenant, and does not create real UiPath Test Cloud, Orchestrator, or Action Center objects during the demo.
 
 The generated outputs are structured locally to show the intended product behavior and the exact integration shape: test cases map to UiPath Test Cloud assets, automation candidates map to Orchestrator execution, and review tasks map to Action Center approvals. This keeps the hackathon demo reliable while making the production integration path explicit.
+
+The backend also supports an optional OpenAI-compatible LLM mode. If a user provides their own API key through environment variables, TestPilot Agent can call a real model for analysis and fall back to the local mock pipeline when no key is present.
 
 Included:
 
 - Release input intake for PRs, requirements, release notes, and bugfixes.
 - AI-style analysis for summary, impact, risk, and test planning.
+- Optional OpenAI-compatible LLM analysis mode.
 - Generated test cases and regression recommendations.
 - Human review task recommendations.
 - Mock UiPath integration plan.
@@ -50,7 +53,7 @@ Included:
 
 Not included by default:
 
-- Hosted LLM API calls.
+- Hosted LLM API calls unless explicitly enabled with a user-provided key.
 - Production UiPath tenant authentication.
 - Real Test Cloud object creation.
 - Real Orchestrator job execution.
@@ -122,6 +125,31 @@ chmod +x scripts/run-dev.sh
 ```
 
 Open `http://localhost:5173`.
+
+### Optional LLM mode
+
+The default mode is `mock`, which is free and stable. To use a real model, copy `.env.example` to `.env`, add your own API key, and switch the mode to `auto` or `llm`.
+
+```bash
+cp .env.example .env
+```
+
+Example:
+
+```env
+TESTPILOT_AGENT_MODE=auto
+TESTPILOT_LLM_API_KEY=your_api_key_here
+TESTPILOT_LLM_BASE_URL=https://api.openai.com/v1
+TESTPILOT_LLM_MODEL=gpt-4o-mini
+```
+
+For DeepSeek or another OpenAI-compatible provider, change `TESTPILOT_LLM_BASE_URL` and `TESTPILOT_LLM_MODEL`. Keep real keys out of Git; `.env` is ignored.
+
+Modes:
+
+- `mock`: always use the local deterministic pipeline.
+- `auto`: call the LLM when a key is configured, otherwise use mock.
+- `llm`: try the LLM first, then fall back to mock unless `TESTPILOT_LLM_STRICT=true`.
 
 ### Manual startup
 

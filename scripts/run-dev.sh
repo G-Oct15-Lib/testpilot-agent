@@ -3,6 +3,13 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 
+if [ -f "$ROOT_DIR/.env" ]; then
+  set -a
+  # shellcheck source=/dev/null
+  . "$ROOT_DIR/.env"
+  set +a
+fi
+
 if [ ! -d "$ROOT_DIR/backend/.venv" ]; then
   python3 -m venv "$ROOT_DIR/backend/.venv"
 fi
@@ -16,8 +23,7 @@ fi
 trap 'kill 0' EXIT
 
 cd "$ROOT_DIR/backend"
-.venv/bin/uvicorn app.main:app --reload --port 8000 &
+.venv/bin/python -m uvicorn app.main:app --reload --port 8000 &
 
 cd "$ROOT_DIR/frontend"
 npm run dev
-

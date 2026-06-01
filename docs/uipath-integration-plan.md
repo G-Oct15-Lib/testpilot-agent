@@ -4,9 +4,11 @@ This document explains how TestPilot Agent maps to UiPath Test Cloud and the sur
 
 ## Current MVP Transparency
 
-The hackathon MVP does not call a hosted LLM provider and does not authenticate to a UiPath tenant. It also does not create real Test Cloud test cases, queue real Orchestrator jobs, or create real Action Center tasks during the demo.
+By default, the hackathon MVP does not call a hosted LLM provider and does not authenticate to a UiPath tenant. It also does not create real Test Cloud test cases, queue real Orchestrator jobs, or create real Action Center tasks during the demo.
 
 Instead, the app produces structured local outputs that are shaped like the intended production integration. This makes the demo repeatable for judges while showing exactly where real UiPath Test Cloud, Orchestrator, Action Center, Integration Service, and API Workflow calls would be connected next.
+
+An optional OpenAI-compatible LLM mode is available for users who provide their own API key. That mode upgrades the analysis step from deterministic mock generation to model-generated structured output, while preserving the same UiPath mapping contract and falling back to mock mode if no key is configured.
 
 ## Integration Goals
 
