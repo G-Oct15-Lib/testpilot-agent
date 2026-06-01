@@ -1,9 +1,11 @@
 import { Download, FileJson, FileText } from "lucide-react";
-import type { TestPlanResponse } from "../types/testPlan";
+import { copy } from "../i18n";
+import type { Language, TestPlanResponse } from "../types/testPlan";
 import { exportJson, exportMarkdown } from "../api/client";
 
 interface ExportActionsProps {
   plan: TestPlanResponse;
+  language: Language;
 }
 
 function download(filename: string, content: string, mimeType: string) {
@@ -16,7 +18,8 @@ function download(filename: string, content: string, mimeType: string) {
   URL.revokeObjectURL(url);
 }
 
-export function ExportActions({ plan }: ExportActionsProps) {
+export function ExportActions({ plan, language }: ExportActionsProps) {
+  const t = copy[language];
   const handleMarkdown = async () => {
     const result = await exportMarkdown(plan);
     download(result.filename, result.content, "text/markdown;charset=utf-8");
@@ -30,19 +33,18 @@ export function ExportActions({ plan }: ExportActionsProps) {
   return (
     <section className="export-bar">
       <div>
-        <p className="eyebrow">Report Export</p>
-        <strong>Download judge-ready artifacts</strong>
+        <p className="eyebrow">{t.reportExport}</p>
+        <strong>{t.downloadArtifacts}</strong>
       </div>
       <button className="secondary-button" type="button" onClick={handleMarkdown}>
         <FileText aria-hidden="true" size={16} />
-        Export Markdown
+        {t.exportMarkdown}
       </button>
       <button className="secondary-button" type="button" onClick={handleJson}>
         <FileJson aria-hidden="true" size={16} />
-        Export JSON
+        {t.exportJson}
       </button>
       <Download aria-hidden="true" size={20} />
     </section>
   );
 }
-

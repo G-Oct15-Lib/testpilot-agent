@@ -6,6 +6,7 @@ from uuid import uuid4
 from app.agent.change_analyzer import analyze_change
 from app.agent.human_review import plan_human_review
 from app.agent.impact_mapper import map_impact
+from app.agent.localizer import localize_plan
 from app.agent.regression_recommender import recommend_regression
 from app.agent.risk_scorer import score_risk
 from app.agent.test_generator import generate_test_cases
@@ -23,7 +24,8 @@ def generate_test_plan(request: AnalyzeRequest) -> TestPlanResponse:
     uipath_plan = plan_uipath_orchestration(test_cases, human_tasks)
 
     plan_id = f"tp-{uuid4().hex[:8]}"
-    return TestPlanResponse(
+    plan = TestPlanResponse(
+        language=request.language,
         planId=plan_id,
         createdAt=datetime.now(timezone.utc).isoformat(),
         changeSummary=change_summary,
@@ -38,3 +40,4 @@ def generate_test_plan(request: AnalyzeRequest) -> TestPlanResponse:
             json_link=f"/api/export/json?planId={plan_id}",
         ),
     )
+    return localize_plan(plan, request)

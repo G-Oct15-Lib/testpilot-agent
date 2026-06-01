@@ -1,17 +1,20 @@
 import { Network } from "lucide-react";
-import type { UiPathOrchestrationPlan } from "../types/testPlan";
+import { assetTypeLabels, copy } from "../i18n";
+import type { Language, UiPathOrchestrationPlan } from "../types/testPlan";
 
 interface UiPathPlanPanelProps {
   plan: UiPathOrchestrationPlan;
+  language: Language;
 }
 
-export function UiPathPlanPanel({ plan }: UiPathPlanPanelProps) {
+export function UiPathPlanPanel({ plan, language }: UiPathPlanPanelProps) {
+  const t = copy[language];
   return (
     <section className="panel uipath-panel">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Execution Layer</p>
-          <h2>UiPath Integration Plan</h2>
+          <p className="eyebrow">{t.executionLayer}</p>
+          <h2>{t.uipathPlan}</h2>
         </div>
         <Network aria-hidden="true" size={24} />
       </div>
@@ -33,9 +36,9 @@ export function UiPathPlanPanel({ plan }: UiPathPlanPanelProps) {
               <span>{step.uipathComponent}</span>
               <p>{step.description}</p>
               <dl>
-                <dt>Input</dt>
+                <dt>{t.input}</dt>
                 <dd>{step.input}</dd>
-                <dt>Output</dt>
+                <dt>{t.output}</dt>
                 <dd>{step.output}</dd>
               </dl>
             </div>
@@ -43,11 +46,11 @@ export function UiPathPlanPanel({ plan }: UiPathPlanPanelProps) {
         ))}
       </div>
 
-      <h3>Test Cloud assets</h3>
+      <h3>{t.testCloudAssets}</h3>
       <div className="asset-grid">
         {plan.testCloudAssets.map((asset) => (
           <article key={`${asset.assetType}-${asset.name}`}>
-            <span>{asset.assetType}</span>
+            <span>{assetTypeLabels[language][asset.assetType] ?? asset.assetType}</span>
             <strong>{asset.name}</strong>
             <p>{asset.description}</p>
           </article>
@@ -56,4 +59,3 @@ export function UiPathPlanPanel({ plan }: UiPathPlanPanelProps) {
     </section>
   );
 }
-

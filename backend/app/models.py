@@ -6,6 +6,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 InputType = Literal["pr_summary", "requirement", "release_note", "bugfix"]
+Language = Literal["en", "zh"]
 ImpactLevel = Literal["low", "medium", "high", "critical"]
 TestType = Literal[
     "functional",
@@ -27,6 +28,7 @@ class AnalyzeRequest(BaseModel):
     title: str = Field(..., min_length=3)
     content: str = Field(..., min_length=20)
     businessContext: Optional[str] = None
+    language: Language = "en"
 
 
 class ChangeSummary(BaseModel):
@@ -123,6 +125,7 @@ class ExportLinks(BaseModel):
 
 
 class TestPlanResponse(BaseModel):
+    language: Language = "en"
     planId: str
     createdAt: str
     changeSummary: ChangeSummary

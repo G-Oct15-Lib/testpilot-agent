@@ -1,17 +1,20 @@
-import type { RegressionRecommendation } from "../types/testPlan";
+import { copy } from "../i18n";
+import type { Language, RegressionRecommendation } from "../types/testPlan";
 import { StatusBadge } from "./StatusBadge";
 
 interface RegressionPanelProps {
   items: RegressionRecommendation[];
+  language: Language;
 }
 
-export function RegressionPanel({ items }: RegressionPanelProps) {
+export function RegressionPanel({ items, language }: RegressionPanelProps) {
+  const t = copy[language];
   return (
     <section className="panel">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Coverage Strategy</p>
-          <h2>Regression recommendations</h2>
+          <p className="eyebrow">{t.coverage}</p>
+          <h2>{t.regression}</h2>
         </div>
       </div>
       <div className="recommendation-list">
@@ -28,4 +31,3 @@ export function RegressionPanel({ items }: RegressionPanelProps) {
     </section>
   );
 }
-

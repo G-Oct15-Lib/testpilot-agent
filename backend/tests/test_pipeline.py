@@ -68,3 +68,30 @@ def test_api_analyze_and_export_roundtrip() -> None:
     exported = export_response.json()
     assert exported["filename"].endswith(".md")
     assert "UiPath Integration Plan" in exported["content"]
+
+
+def test_chinese_language_generates_localized_plan_and_export() -> None:
+    client = TestClient(app)
+    payload = {
+        "inputType": "pr_summary",
+        "title": "结账支付超时处理",
+        "businessContext": "电商结账和支付流程",
+        "content": (
+            "这个 PR 更新了结账支付重试逻辑。当支付网关超时时，系统会最多重试两次授权请求，"
+            "然后才将付款标记为失败。它还调整客户可见错误文案，并更新订单状态处理。"
+        ),
+        "language": "zh",
+    }
+
+    analyze_response = client.post("/api/analyze", json=payload)
+    assert analyze_response.status_code == 200
+    plan = analyze_response.json()
+    assert plan["language"] == "zh"
+    assert "结构化、基于风险的测试计划" in plan["changeSummary"]["summary"]
+    assert any("支付" in module["name"] for module in plan["impactAnalysis"]["affectedModules"])
+    assert plan["testCases"][0]["title"].startswith("冒烟验证")
+
+    export_response = client.post("/api/export/markdown", json=plan)
+    assert export_response.status_code == 200
+    exported = export_response.json()
+    assert "# TestPilot Agent 测试计划" in exported["content"]

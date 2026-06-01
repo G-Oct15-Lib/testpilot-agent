@@ -4,6 +4,9 @@ from app.models import TestPlanResponse
 
 
 def export_markdown(plan: TestPlanResponse) -> str:
+    if plan.language == "zh":
+        return export_markdown_zh(plan)
+
     lines: list[str] = [
         "# TestPilot Agent Test Plan",
         "",
@@ -92,3 +95,90 @@ def export_markdown(plan: TestPlanResponse) -> str:
 
     return "\n".join(lines).strip() + "\n"
 
+
+def export_markdown_zh(plan: TestPlanResponse) -> str:
+    lines: list[str] = [
+        "# TestPilot Agent 测试计划",
+        "",
+        f"**计划 ID：** {plan.planId}",
+        f"**创建时间：** {plan.createdAt}",
+        "",
+        "## 变更摘要",
+        "",
+        f"**标题：** {plan.changeSummary.title}",
+        f"**输入类型：** {plan.changeSummary.inputType}",
+        "",
+        plan.changeSummary.summary,
+        "",
+        "### 关键变化",
+    ]
+    lines.extend(f"- {item}" for item in plan.changeSummary.keyChanges)
+
+    lines.extend(["", "## 风险评估", ""])
+    lines.append(f"**总体风险：** {plan.riskAssessment.overallRisk.upper()}")
+    lines.append(f"**风险分数：** {plan.riskAssessment.riskScore}/100")
+    lines.append("")
+    lines.append("### 风险因素")
+    lines.extend(
+        f"- **{factor.severity.upper()}** {factor.factor}: {factor.explanation}"
+        for factor in plan.riskAssessment.riskFactors
+    )
+
+    lines.extend(["", "## 受影响模块", ""])
+    lines.extend(
+        f"- **{module.name}** ({module.impactLevel}): {module.reason}"
+        for module in plan.impactAnalysis.affectedModules
+    )
+
+    lines.extend(["", "## 生成的测试用例", ""])
+    for test in plan.testCases:
+        lines.extend(
+            [
+                f"### {test.id}: {test.title}",
+                "",
+                f"- 类型: {test.type}",
+                f"- 优先级: {test.priority}",
+                f"- 风险等级: {test.riskLevel}",
+                f"- 自动化候选: {'是' if test.automationCandidate else '否'}",
+                f"- UiPath 测试集: {test.uipathTestCloudMapping.testSet}",
+                "",
+                "**步骤：**",
+            ]
+        )
+        lines.extend(f"{idx}. {step}" for idx, step in enumerate(test.steps, start=1))
+        lines.extend(["", f"**预期结果：** {test.expectedResult}", ""])
+
+    lines.extend(["", "## 回归建议", ""])
+    lines.extend(
+        f"- **{item.priority} {item.module}:** {item.scenario}. {item.reason}"
+        for item in plan.regressionRecommendations
+    )
+
+    lines.extend(["", "## 人工复核任务", ""])
+    lines.extend(
+        f"- **{task.assigneeRole}:** {task.title}. {task.reason}"
+        for task in plan.humanReviewTasks
+    )
+
+    lines.extend(["", "## UiPath 集成方案", "", plan.uipathOrchestrationPlan.summary, ""])
+    lines.append("### 组件")
+    lines.extend(f"- {component}" for component in plan.uipathOrchestrationPlan.components)
+    lines.extend(["", "### 工作流步骤"])
+    for step in plan.uipathOrchestrationPlan.workflowSteps:
+        lines.extend(
+            [
+                f"{step.step}. **{step.name}**",
+                f"   - UiPath 组件: {step.uipathComponent}",
+                f"   - 说明: {step.description}",
+                f"   - 输入: {step.input}",
+                f"   - 输出: {step.output}",
+            ]
+        )
+
+    lines.extend(["", "## 发布就绪说明", ""])
+    if plan.riskAssessment.overallRisk in {"high", "critical"}:
+        lines.append("P0/P1 测试通过且必要人工审批完成前，不建议推进该发布。")
+    else:
+        lines.append("该发布可在标准冒烟和回归检查通过后推进。")
+
+    return "\n".join(lines).strip() + "\n"

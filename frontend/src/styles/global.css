@@ -90,6 +90,36 @@ button {
   white-space: nowrap;
 }
 
+.topbar-actions {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+}
+
+.language-switch {
+  background: #ffffff;
+  border: 1px solid #d8e2de;
+  border-radius: 999px;
+  display: inline-flex;
+  padding: 4px;
+}
+
+.language-switch button {
+  background: transparent;
+  border: 0;
+  border-radius: 999px;
+  color: #53645f;
+  font-size: 0.86rem;
+  font-weight: 800;
+  min-height: 34px;
+  padding: 0 12px;
+}
+
+.language-switch button.active {
+  background: #0d7c66;
+  color: #ffffff;
+}
+
 .main-grid {
   display: grid;
   gap: 20px;
@@ -605,6 +635,16 @@ dd {
   .topbar {
     align-items: stretch;
     display: grid;
+  }
+
+  .topbar-actions {
+    align-items: stretch;
+    display: grid;
+  }
+
+  .language-switch,
+  .status-pill {
+    justify-content: center;
   }
 
   .summary-grid {

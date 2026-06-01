@@ -1,4 +1,5 @@
 export type InputType = "pr_summary" | "requirement" | "release_note" | "bugfix";
+export type Language = "en" | "zh";
 export type ImpactLevel = "low" | "medium" | "high" | "critical";
 export type TestType =
   | "functional"
@@ -16,6 +17,7 @@ export interface AnalyzeRequest {
   title: string;
   content: string;
   businessContext?: string;
+  language?: Language;
 }
 
 export interface ExampleScenario extends AnalyzeRequest {
@@ -110,6 +112,7 @@ export interface UiPathOrchestrationPlan {
 }
 
 export interface TestPlanResponse {
+  language: Language;
   planId: string;
   createdAt: string;
   changeSummary: ChangeSummary;
@@ -129,4 +132,3 @@ export interface ExportResponse {
   filename: string;
   content: string;
 }
-

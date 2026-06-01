@@ -1,17 +1,20 @@
-import type { TestCase } from "../types/testPlan";
+import { automationLabels, copy, testTypeLabels } from "../i18n";
+import type { Language, TestCase } from "../types/testPlan";
 import { StatusBadge } from "./StatusBadge";
 
 interface TestCaseTableProps {
   testCases: TestCase[];
+  language: Language;
 }
 
-export function TestCaseTable({ testCases }: TestCaseTableProps) {
+export function TestCaseTable({ testCases, language }: TestCaseTableProps) {
+  const t = copy[language];
   return (
     <section className="panel">
       <div className="panel-heading">
         <div>
-          <p className="eyebrow">Test Cloud Assets</p>
-          <h2>Generated test cases</h2>
+          <p className="eyebrow">{t.testAssets}</p>
+          <h2>{t.testCases}</h2>
         </div>
       </div>
 
@@ -19,13 +22,13 @@ export function TestCaseTable({ testCases }: TestCaseTableProps) {
         <table>
           <thead>
             <tr>
-              <th>ID</th>
-              <th>Title</th>
-              <th>Type</th>
-              <th>Priority</th>
-              <th>Risk</th>
-              <th>Automation</th>
-              <th>UiPath Test Cloud mapping</th>
+              <th>{t.id}</th>
+              <th>{t.title}</th>
+              <th>{t.type}</th>
+              <th>{t.priority}</th>
+              <th>{t.risk}</th>
+              <th>{t.automation}</th>
+              <th>{t.mapping}</th>
             </tr>
           </thead>
           <tbody>
@@ -36,17 +39,17 @@ export function TestCaseTable({ testCases }: TestCaseTableProps) {
                   <strong>{test.title}</strong>
                   <span>{test.expectedResult}</span>
                 </td>
-                <td>{test.type}</td>
+                <td>{testTypeLabels[language][test.type]}</td>
                 <td>
                   <StatusBadge value={test.priority} tone="priority" />
                 </td>
                 <td>
-                  <StatusBadge value={test.riskLevel} />
+                  <StatusBadge value={test.riskLevel} language={language} />
                 </td>
-                <td>{test.automationCandidate ? "Candidate" : "Manual"}</td>
+                <td>{test.automationCandidate ? t.candidate : t.manual}</td>
                 <td>
                   <strong>{test.uipathTestCloudMapping.testSet}</strong>
-                  <span>{test.uipathTestCloudMapping.automationType}</span>
+                  <span>{automationLabels[language][test.uipathTestCloudMapping.automationType]}</span>
                 </td>
               </tr>
             ))}
@@ -56,4 +59,3 @@ export function TestCaseTable({ testCases }: TestCaseTableProps) {
     </section>
   );
 }
-

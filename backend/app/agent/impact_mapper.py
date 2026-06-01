@@ -23,7 +23,7 @@ def map_impact(request: AnalyzeRequest) -> ImpactAnalysis:
             continue
 
         impact_level = rule.default_level
-        if {"payment", "checkout", "security", "permission", "delete", "production"} & set(matches):
+        if {"payment", "checkout", "security", "permission", "delete", "production", "支付", "付款", "结账", "安全", "权限", "删除", "生产"} & set(matches):
             impact_level = _max_level(impact_level, "critical")
 
         modules.append(
@@ -52,4 +52,3 @@ def map_impact(request: AnalyzeRequest) -> ImpactAnalysis:
         businessProcesses=list(dict.fromkeys(business_processes)),
         technicalAreas=list(dict.fromkeys(technical_areas)),
     )
-
