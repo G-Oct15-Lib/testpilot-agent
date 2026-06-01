@@ -33,6 +33,12 @@ TestPilot Agent is designed around Test Cloud as the destination for test cases,
 
 The MVP demonstrates the end-to-end workflow without depending on live UiPath APIs.
 
+### Current MVP Transparency
+
+This submission runs as a local deterministic/mock agent pipeline. It does not call a hosted LLM provider, does not authenticate to a UiPath tenant, and does not create real UiPath Test Cloud, Orchestrator, or Action Center objects during the demo.
+
+The generated outputs are structured locally to show the intended product behavior and the exact integration shape: test cases map to UiPath Test Cloud assets, automation candidates map to Orchestrator execution, and review tasks map to Action Center approvals. This keeps the hackathon demo reliable while making the production integration path explicit.
+
 Included:
 
 - Release input intake for PRs, requirements, release notes, and bugfixes.
@@ -44,6 +50,7 @@ Included:
 
 Not included by default:
 
+- Hosted LLM API calls.
 - Production UiPath tenant authentication.
 - Real Test Cloud object creation.
 - Real Orchestrator job execution.
