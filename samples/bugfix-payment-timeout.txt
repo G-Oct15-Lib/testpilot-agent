@@ -1,0 +1,4 @@
+Bug Fix: Payment timeout recovery
+
+The payment callback worker now detects gateway timeouts and stores the order in a pending payment state. A retry job attempts recovery before cancelling the order. Customer support receives an alert when recovery fails after two attempts.
+

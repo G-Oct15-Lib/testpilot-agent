@@ -1,0 +1,13 @@
+PR Summary: Checkout payment timeout handling
+
+This PR updates the checkout payment retry logic. When the payment gateway times out, the system now retries the authorization request up to two times before marking the payment as failed.
+
+Changed areas:
+- Checkout payment flow
+- Payment gateway adapter
+- Order status update logic
+- Customer-facing error message
+
+Potential concern:
+This affects the revenue-critical checkout path and may impact order creation, duplicate charges, and failed payment recovery.
+

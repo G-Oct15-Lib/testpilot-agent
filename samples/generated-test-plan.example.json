@@ -1,0 +1,392 @@
+{
+  "planId": "tp-138f1843",
+  "createdAt": "2026-06-01T02:15:04.111447+00:00",
+  "changeSummary": {
+    "title": "Checkout payment timeout handling",
+    "summary": "This pr summary introduces changes related to timeout, checkout, payment, authorization, order. TestPilot Agent converted the raw change description into a structured, risk-based testing plan.",
+    "inputType": "pr_summary",
+    "keyChanges": [
+      "PR Summary: Checkout payment timeout handling",
+      "This PR updates the checkout payment retry logic. When the payment gateway times out, the system now retries the authorization request up to two times before marking the payment as failed.",
+      "Checkout payment flow",
+      "Payment gateway adapter",
+      "Order status update logic"
+    ]
+  },
+  "impactAnalysis": {
+    "affectedModules": [
+      {
+        "name": "Checkout",
+        "impactLevel": "critical",
+        "reason": "The change touches the customer checkout path. Matched signals: checkout, payment, order."
+      },
+      {
+        "name": "Payment Gateway",
+        "impactLevel": "critical",
+        "reason": "Payment behavior can affect revenue, duplicate charges, and failed recovery. Matched signals: payment, gateway, charge, authorization."
+      },
+      {
+        "name": "Order Management",
+        "impactLevel": "high",
+        "reason": "Order status changes can break fulfillment or reconciliation flows. Matched signals: order, status."
+      },
+      {
+        "name": "Authentication",
+        "impactLevel": "critical",
+        "reason": "Authentication changes control access to the application. Matched signals: auth."
+      },
+      {
+        "name": "Authorization",
+        "impactLevel": "critical",
+        "reason": "Permission changes can expose or block protected workflows. Matched signals: authorization."
+      },
+      {
+        "name": "Backend API",
+        "impactLevel": "high",
+        "reason": "API changes can affect multiple downstream consumers. Matched signals: request."
+      },
+      {
+        "name": "Frontend UI",
+        "impactLevel": "medium",
+        "reason": "UI changes can alter how users complete the workflow. Matched signals: message."
+      }
+    ],
+    "businessProcesses": [
+      "Order-to-cash checkout flow",
+      "Payment authorization and billing",
+      "Order lifecycle management",
+      "User access and account security",
+      "Role-based access control",
+      "Application service integration",
+      "User interaction flow"
+    ],
+    "technicalAreas": [
+      "Commerce workflow",
+      "External payment integration",
+      "State transition logic",
+      "Identity and session management",
+      "Security policy enforcement",
+      "Backend API",
+      "Frontend experience"
+    ]
+  },
+  "riskAssessment": {
+    "overallRisk": "critical",
+    "riskScore": 100,
+    "riskFactors": [
+      {
+        "factor": "Detected critical business or security keyword",
+        "severity": "critical",
+        "explanation": "Matched signals: checkout, payment, authorization."
+      },
+      {
+        "factor": "Detected failure or integration keyword",
+        "severity": "high",
+        "explanation": "Matched signals: timeout, failed, order, retry."
+      },
+      {
+        "factor": "Multiple affected modules",
+        "severity": "high",
+        "explanation": "The change crosses multiple modules, increasing regression and orchestration risk."
+      }
+    ]
+  },
+  "testCases": [
+    {
+      "id": "TC-001",
+      "title": "Smoke validate Checkout critical path",
+      "type": "smoke",
+      "priority": "P0",
+      "riskLevel": "critical",
+      "steps": [
+        "Open the application in a production-like test environment.",
+        "Complete the main checkout workflow with valid data.",
+        "Verify the user reaches the expected success state without blocking errors."
+      ],
+      "expectedResult": "The main workflow remains available after the change.",
+      "automationCandidate": true,
+      "uipathTestCloudMapping": {
+        "testSet": "Checkout Release Readiness",
+        "testCaseName": "Smoke validate Checkout critical path",
+        "automationType": "automated"
+      }
+    },
+    {
+      "id": "TC-002",
+      "title": "Verify changed behavior for Checkout payment timeout handling",
+      "type": "functional",
+      "priority": "P0",
+      "riskLevel": "critical",
+      "steps": [
+        "Prepare test data that exercises the changed behavior.",
+        "Execute the updated path described in the change summary.",
+        "Compare the actual behavior with the release requirement."
+      ],
+      "expectedResult": "The changed behavior matches the requirement and does not introduce incorrect states.",
+      "automationCandidate": true,
+      "uipathTestCloudMapping": {
+        "testSet": "Checkout Release Readiness",
+        "testCaseName": "Verify changed behavior for Checkout payment timeout handling",
+        "automationType": "hybrid"
+      }
+    },
+    {
+      "id": "TC-003",
+      "title": "Regression cover neighboring Checkout scenarios",
+      "type": "regression",
+      "priority": "P1",
+      "riskLevel": "critical",
+      "steps": [
+        "Run existing regression scenarios for the affected module.",
+        "Include adjacent success, failure, and retry paths.",
+        "Check that previous behavior remains backward compatible."
+      ],
+      "expectedResult": "Existing supported scenarios still pass after the release change.",
+      "automationCandidate": true,
+      "uipathTestCloudMapping": {
+        "testSet": "Checkout Release Readiness",
+        "testCaseName": "Regression cover neighboring Checkout scenarios",
+        "automationType": "automated"
+      }
+    },
+    {
+      "id": "TC-004",
+      "title": "Validate downstream integration contracts",
+      "type": "integration",
+      "priority": "P1",
+      "riskLevel": "critical",
+      "steps": [
+        "Trigger the changed workflow through the public API or integration boundary.",
+        "Inspect request, response, and state transition data.",
+        "Confirm that dependent services receive compatible data."
+      ],
+      "expectedResult": "External and downstream integrations remain compatible with the change.",
+      "automationCandidate": true,
+      "uipathTestCloudMapping": {
+        "testSet": "Checkout Release Readiness",
+        "testCaseName": "Validate downstream integration contracts",
+        "automationType": "automated"
+      }
+    },
+    {
+      "id": "TC-005",
+      "title": "Explore high-risk exception and recovery paths",
+      "type": "exploratory",
+      "priority": "P1",
+      "riskLevel": "critical",
+      "steps": [
+        "Force timeout, validation, or failure conditions from the risk assessment.",
+        "Observe customer-facing messaging and internal status updates.",
+        "Document any behavior that requires product or release manager review."
+      ],
+      "expectedResult": "Unexpected failures are handled clearly and recoverably.",
+      "automationCandidate": false,
+      "uipathTestCloudMapping": {
+        "testSet": "Checkout Release Readiness",
+        "testCaseName": "Explore high-risk exception and recovery paths",
+        "automationType": "manual"
+      }
+    },
+    {
+      "id": "TC-006",
+      "title": "Approval gate for high-risk release decision",
+      "type": "security",
+      "priority": "P1",
+      "riskLevel": "critical",
+      "steps": [
+        "Review generated P0/P1 cases with QA Lead and Release Manager.",
+        "Confirm whether all automated and manual gates are satisfied.",
+        "Record approval or rollback recommendation before release."
+      ],
+      "expectedResult": "A human owner explicitly approves or blocks the high-risk release.",
+      "automationCandidate": false,
+      "uipathTestCloudMapping": {
+        "testSet": "Checkout Release Readiness",
+        "testCaseName": "Approval gate for high-risk release decision",
+        "automationType": "manual"
+      }
+    }
+  ],
+  "regressionRecommendations": [
+    {
+      "module": "Checkout",
+      "scenario": "Cart to payment happy path",
+      "reason": "Checkout changes can affect the conversion path.",
+      "priority": "P0"
+    },
+    {
+      "module": "Checkout",
+      "scenario": "Coupon and tax calculation",
+      "reason": "Checkout pricing rules are often adjacent to payment flow.",
+      "priority": "P0"
+    },
+    {
+      "module": "Checkout",
+      "scenario": "Payment failure recovery",
+      "reason": "Failure recovery protects customer trust and order consistency.",
+      "priority": "P0"
+    },
+    {
+      "module": "Payment Gateway",
+      "scenario": "Authorization timeout and retry",
+      "reason": "Gateway timeouts can create duplicate or missing charges.",
+      "priority": "P0"
+    },
+    {
+      "module": "Payment Gateway",
+      "scenario": "Failed payment messaging",
+      "reason": "Customers need a clear path to recover from failed payments.",
+      "priority": "P0"
+    },
+    {
+      "module": "Payment Gateway",
+      "scenario": "Settlement and billing reconciliation",
+      "reason": "Revenue systems must stay consistent after payment changes.",
+      "priority": "P0"
+    },
+    {
+      "module": "Order Management",
+      "scenario": "Pending order status transition",
+      "reason": "Order status changes affect fulfillment and support workflows.",
+      "priority": "P1"
+    },
+    {
+      "module": "Order Management",
+      "scenario": "Cancelled order handling",
+      "reason": "Cancellation logic must not trigger prematurely.",
+      "priority": "P1"
+    }
+  ],
+  "humanReviewTasks": [
+    {
+      "id": "HR-001",
+      "title": "QA Lead approval for high-risk test plan",
+      "assigneeRole": "QA Lead",
+      "reason": "The generated plan contains high-risk modules or P0/P1 test cases that need human validation.",
+      "approvalRequired": true
+    },
+    {
+      "id": "HR-002",
+      "title": "Release Manager review for revenue-critical workflow",
+      "assigneeRole": "Release Manager",
+      "reason": "Checkout, payment, or order state changes can affect revenue and customer recovery paths.",
+      "approvalRequired": true
+    },
+    {
+      "id": "HR-003",
+      "title": "Security reviewer approval for access-control change",
+      "assigneeRole": "Security Reviewer",
+      "reason": "Authentication and authorization changes require explicit security review.",
+      "approvalRequired": true
+    }
+  ],
+  "uipathOrchestrationPlan": {
+    "summary": "UiPath acts as the enterprise execution and orchestration layer: Test Cloud manages test assets, Orchestrator launches automation, Action Center keeps humans in the loop, and API Workflows connect release systems to the TestPilot Agent pipeline.",
+    "components": [
+      "UiPath Test Cloud / Test Manager",
+      "UiPath Orchestrator",
+      "UiPath Robots",
+      "UiPath Action Center",
+      "UiPath Apps",
+      "UiPath Integration Service",
+      "UiPath API Workflows",
+      "UiPath AI Agent / Autopilot-ready extension point"
+    ],
+    "workflowSteps": [
+      {
+        "step": 1,
+        "name": "Receive change input from GitHub PR or release note",
+        "uipathComponent": "UiPath API Workflow / Integration Service",
+        "description": "Collect release context from GitHub, Jira, CI/CD, or a manual release note form.",
+        "input": "PR summary, requirement, release note, or bugfix description",
+        "output": "Normalized change payload for TestPilot Agent"
+      },
+      {
+        "step": 2,
+        "name": "Trigger TestPilot Agent analysis",
+        "uipathComponent": "UiPath AI Agent / API Workflow",
+        "description": "Invoke the analysis pipeline to generate risk, test cases, regression recommendations, and approval needs.",
+        "input": "Normalized change payload",
+        "output": "Structured TestPlanResponse JSON"
+      },
+      {
+        "step": 3,
+        "name": "Create or update test assets",
+        "uipathComponent": "UiPath Test Cloud / Test Manager",
+        "description": "Map generated test cases to Test Cloud test sets, cases, requirements, and test data.",
+        "input": "6 generated test cases",
+        "output": "Test Cloud assets ready for execution and traceability"
+      },
+      {
+        "step": 4,
+        "name": "Launch automated regression tests",
+        "uipathComponent": "UiPath Orchestrator + Robots",
+        "description": "Run automation candidates through unattended or attended robots as part of release readiness.",
+        "input": "4 automation candidates",
+        "output": "Automated execution results linked back to Test Cloud"
+      },
+      {
+        "step": 5,
+        "name": "Route manual and approval tasks",
+        "uipathComponent": "UiPath Action Center",
+        "description": "Send high-risk manual checks and approval gates to the right human owner.",
+        "input": "2 manual checks and 3 review tasks",
+        "output": "Approval or rejection decision with reviewer notes"
+      },
+      {
+        "step": 6,
+        "name": "Produce release readiness summary",
+        "uipathComponent": "UiPath Apps / Dashboard / API Workflow",
+        "description": "Combine AI analysis, test execution, and human decisions into a release readiness view.",
+        "input": "Test Cloud results, Orchestrator job status, Action Center decisions",
+        "output": "Go / no-go summary for release stakeholders"
+      }
+    ],
+    "testCloudAssets": [
+      {
+        "assetType": "Test Set",
+        "name": "Checkout Release Readiness",
+        "description": "Generated release-readiness test set grouped by affected module and risk."
+      },
+      {
+        "assetType": "Test Case",
+        "name": "Smoke validate Checkout critical path",
+        "description": "P0 smoke case mapped as automated."
+      },
+      {
+        "assetType": "Test Case",
+        "name": "Verify changed behavior for Checkout payment timeout handling",
+        "description": "P0 functional case mapped as hybrid."
+      },
+      {
+        "assetType": "Test Case",
+        "name": "Regression cover neighboring Checkout scenarios",
+        "description": "P1 regression case mapped as automated."
+      },
+      {
+        "assetType": "Test Case",
+        "name": "Validate downstream integration contracts",
+        "description": "P1 integration case mapped as automated."
+      },
+      {
+        "assetType": "Test Case",
+        "name": "Explore high-risk exception and recovery paths",
+        "description": "P1 exploratory case mapped as manual."
+      },
+      {
+        "assetType": "Test Case",
+        "name": "Approval gate for high-risk release decision",
+        "description": "P1 security case mapped as manual."
+      },
+      {
+        "assetType": "Requirement",
+        "name": "Release readiness requirement",
+        "description": "Traceability item connecting the source change to generated test coverage."
+      }
+    ]
+  },
+  "exportLinks": {
+    "markdown": "/api/export/markdown?planId=tp-138f1843",
+    "json": "/api/export/json?planId=tp-138f1843"
+  }
+}
