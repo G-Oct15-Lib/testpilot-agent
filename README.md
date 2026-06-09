@@ -216,3 +216,7 @@ Codex was used as a coding agent to accelerate architecture, documentation, plan
 - Add source-system connectors through Integration Service.
 - Wrap cross-system calls in API Workflows.
 - Add role-based access, audit logs, and production-grade secret handling.
+
+## License
+
+This project is open source under the MIT License. See `LICENSE` for details.
